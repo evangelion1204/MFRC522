@@ -22,7 +22,9 @@ class MFRC522:
   PICC_REQIDL    = 0x26
   PICC_REQALL    = 0x52
   PICC_ANTICOLL  = 0x93
+  PICC_ANTICOLL_LEVEL = [0x93, 0x95]
   PICC_SElECTTAG = 0x93
+  PICC_SELECTTAG_LEVEL = [0x93, 0x95]
   PICC_AUTHENT1A = 0x60
   PICC_AUTHENT1B = 0x61
   PICC_READ      = 0x30
@@ -220,11 +222,11 @@ class MFRC522:
     
     TagType.append(reqMode);
     (status,backData,backBits) = self.MFRC522_ToCard(self.PCD_TRANSCEIVE, TagType)
-  
+
     if ((status != self.MI_OK) | (backBits != 0x10)):
       status = self.MI_ERR
       
-    return (status,backBits)
+    return (status,backBits,backData)
   
   
   def MFRC522_Anticoll(self):
@@ -239,6 +241,9 @@ class MFRC522:
     serNum.append(0x20)
     
     (status,backData,backBits) = self.MFRC522_ToCard(self.PCD_TRANSCEIVE,serNum)
+
+    print backData
+    print backBits
     
     if(status == self.MI_OK):
       i = 0
@@ -252,7 +257,36 @@ class MFRC522:
         status = self.MI_ERR
   
     return (status,backData)
+
+  def MFRC522_AnticollLevel(self, cascadeLevel):
+    backData = []
+    serNumCheck = 0
+    
+    serNum = []
   
+    self.Write_MFRC522(self.BitFramingReg, 0x00)
+    
+    serNum.append(self.PICC_ANTICOLL_LEVEL[cascadeLevel - 1])
+    serNum.append(0x20)
+    
+    (status,backData,backBits) = self.MFRC522_ToCard(self.PCD_TRANSCEIVE,serNum)
+
+    print backData
+    print backBits
+    
+    if(status == self.MI_OK):
+      i = 0
+      if len(backData)==5:
+        while i<4:
+          serNumCheck = serNumCheck ^ backData[i]
+          i = i + 1
+        if serNumCheck != backData[i]:
+          status = self.MI_ERR
+      else:
+        status = self.MI_ERR
+  
+    return (status,backData)
+
   def CalulateCRC(self, pIndata):
     self.ClearBitMask(self.DivIrqReg, 0x04)
     self.SetBitMask(self.FIFOLevelReg, 0x80);
@@ -291,6 +325,29 @@ class MFRC522:
       return    backData[0]
     else:
       return 0
+
+  def MFRC522_SelectTagLevel(self, cascadeLevel, serNum):
+    print "Select Level %d" % cascadeLevel
+    backData = []
+    buf = []
+    buf.append(self.PICC_SELECTTAG_LEVEL[cascadeLevel - 1])
+    buf.append(0x70)
+    i = 0
+    while i<5:
+      buf.append(serNum[i])
+      i = i + 1
+    pOut = self.CalulateCRC(buf)
+    buf.append(pOut[0])
+    buf.append(pOut[1])
+    (status, backData, backLen) = self.MFRC522_ToCard(self.PCD_TRANSCEIVE, buf)
+    
+    print backData
+
+    if (status == self.MI_OK) and (backLen == 0x18):
+      print "Size: " + str(backData[0])
+      return backData[0]
+    else:
+      return 0      
   
   def MFRC522_Auth(self, authMode, BlockAddr, Sectorkey, serNum):
     buff = []
@@ -352,14 +409,17 @@ class MFRC522:
     (status, backData, backLen) = self.MFRC522_ToCard(self.PCD_TRANSCEIVE, buff)
     if not(status == self.MI_OK) or not(backLen == 4) or not((backData[0] & 0x0F) == 0x0A):
         status = self.MI_ERR
-    
+
     print str(backLen)+" backdata &0x0F == 0x0A "+str(backData[0]&0x0F)
     if status == self.MI_OK:
-        i = 0
         buf = []
-        while i < 16:
+        for i in range(0, len(writeData)):
             buf.append(writeData[i])
-            i = i + 1
+
+        for i in range(len(writeData), 16):
+            buf.append(0)
+
+        print buf
         crc = self.CalulateCRC(buf)
         buf.append(crc[0])
         buf.append(crc[1])
@@ -368,6 +428,21 @@ class MFRC522:
             print "Error while writing"
         if status == self.MI_OK:
             print "Data written"
+
+  def MFRC522_WriteString(self, blockAddr, str):
+    data = []
+    blockOffset = 0
+    for position, character in enumerate(str):
+      if position > 0 and position % 4 == 0:
+        self.MFRC522_Write(blockAddr + blockOffset, data)
+        data = []
+        blockOffset = blockOffset + 1
+
+      data.append(ord(character))
+
+    if len(data):
+      self.MFRC522_Write(blockAddr + blockOffset, data)
+
 
   def MFRC522_DumpClassic1K(self, key, uid):
     i = 0
@@ -379,6 +454,18 @@ class MFRC522:
         else:
             print "Authentication error"
         i = i+1
+
+  def MFRC522_HALT(self):
+    buf = []
+  
+    buf.append(self.PICC_HALT)
+    buf.append(0x00)
+
+    pOut = self.CalulateCRC(buf)
+    buf.append(pOut[0])
+    buf.append(pOut[1])
+
+    (status, backData, backLen) = self.MFRC522_ToCard(self.PCD_TRANSCEIVE, buf)
 
   def MFRC522_Init(self):
     GPIO.output(self.NRSTPD, 1)
