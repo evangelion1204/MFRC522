@@ -426,14 +426,14 @@ class MFRC522:
     blockOffset = 0
     for position, character in enumerate(str):
       if position > 0 and position % 4 == 0:
-        self.send(blockAddr + blockOffset, data)
+        self.Write(blockAddr + blockOffset, data)
         data = []
         blockOffset = blockOffset + 1
 
       data.append(ord(character))
 
     if len(data):
-      self.send(blockAddr + blockOffset, data)
+      self.Write(blockAddr + blockOffset, data)
 
 
   def DumpClassic1K(self, key, uid):
