@@ -377,7 +377,7 @@ class MFRC522:
   def stopCrypto1(self):
     self.clearBitMask(self.Status2Reg, 0x08)
 
-  def Read(self, blockAddr):
+  def read(self, blockAddr):
     recvData = []
     recvData.append(self.PICC_READ)
     recvData.append(blockAddr)
