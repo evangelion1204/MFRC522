@@ -30,7 +30,7 @@ while continue_reading:
     # Scan for cards    
     time.sleep(1)
     
-    (status,TagType,ATQA) = MIFAREReader.MFRC522_Request(MIFAREReader.PICC_REQIDL)
+    (status,TagType,ATQA) = MIFAREReader.Request(MIFAREReader.PICC_REQIDL)
 
     # If a card is found
     if status != MIFAREReader.MI_OK:
@@ -43,7 +43,7 @@ while continue_reading:
     print "Card detected %04x" % ATQAWord
     
     # Get the UID of the card
-    (status,uid) = MIFAREReader.MFRC522_AnticollLevel(1)
+    (status,uid) = MIFAREReader.AnticollLevel(1)
 
     # If we have the UID, continue
     if status == MIFAREReader.MI_OK:
@@ -54,17 +54,17 @@ while continue_reading:
         key = [0xFF,0xFF,0xFF,0xFF,0xFF,0xFF]
         
         # Select the scanned tag
-        print MIFAREReader.MFRC522_SelectTagLevel(1, uid)
-        (status2,uid2) = MIFAREReader.MFRC522_AnticollLevel(2)
-        print MIFAREReader.MFRC522_SelectTagLevel(2, uid2)
+        print MIFAREReader.SelectTagLevel(1, uid)
+        (status2,uid2) = MIFAREReader.AnticollLevel(2)
+        print MIFAREReader.SelectTagLevel(2, uid2)
 
         print uid[1:4] + uid2[0:4]
 
         # Authenticate
-        # status = MIFAREReader.MFRC522_Auth(MIFAREReader.PICC_AUTHENT1A, 8, key, uid)
-        MIFAREReader.MFRC522_Read(0)
-        MIFAREReader.MFRC522_Read(4)
-        MIFAREReader.MFRC522_Read(8)
+        # status = MIFAREReader.Auth(MIFAREReader.PICC_AUTHENT1A, 8, key, uid)
+        MIFAREReader.Read(0)
+        MIFAREReader.Read(4)
+        MIFAREReader.Read(8)
 
         # Variable for the data to write
         data = []
@@ -73,16 +73,16 @@ while continue_reading:
         # for x in range(0,16):
         #     data.append(x)
         #
-        # MIFAREReader.MFRC522_Write(4, data)
+        # MIFAREReader.Write(4, data)
 
-        MIFAREReader.MFRC522_WriteString(4, 'Hallo World')
+        MIFAREReader.WriteString(4, 'Hallo World')
 
-        MIFAREReader.MFRC522_HALT()
+        MIFAREReader.Halt()
 
         # Check if authenticated
         # if status == MIFAREReader.MI_OK:
-        #     MIFAREReader.MFRC522_Read(8)
-        #     MIFAREReader.MFRC522_StopCrypto1()
+        #     MIFAREReader.Read(8)
+        #     MIFAREReader.StopCrypto1()
         # else:
         #     print "Authentication error"
 

@@ -447,7 +447,7 @@ class MFRC522:
             print "Authentication error"
         i = i+1
 
-  def HALT(self):
+  def Halt(self):
     buf = []
   
     buf.append(self.PICC_HALT)
