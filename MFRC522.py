@@ -114,7 +114,7 @@ class MFRC522:
     GPIO.setmode(GPIO.BOARD)
     GPIO.setup(22, GPIO.OUT)
     GPIO.output(self.NRSTPD, 1)
-    self.Init()
+    self.init()
   
   def reset(self):
     self.send(self.CommandReg, self.PCD_RESETPHASE)
@@ -211,9 +211,9 @@ class MFRC522:
         status = self.MI_ERR
 
     return (status,backData,backLen)
-  
-  
-  def Request(self, reqMode):
+
+
+  def request(self, reqMode):
     status = None
     backBits = None
     TagType = []
@@ -229,7 +229,7 @@ class MFRC522:
     return (status,backBits,backData)
   
   
-  def Anticoll(self):
+  def anticoll(self):
     serNumCheck = 0
     
     serNum = []
@@ -254,7 +254,7 @@ class MFRC522:
   
     return (status,backData)
 
-  def AnticollLevel(self, cascadeLevel):
+  def anticollLevel(self, cascadeLevel):
     serNumCheck = 0
     
     serNum = []
@@ -279,7 +279,7 @@ class MFRC522:
   
     return (status,backData)
 
-  def CalulateCRC(self, pIndata):
+  def calulateCRC(self, pIndata):
     self.clearBitMask(self.DivIrqReg, 0x04)
     self.setBitMask(self.FIFOLevelReg, 0x80);
     i = 0
@@ -298,7 +298,7 @@ class MFRC522:
     pOutData.append(self.receive(self.CRCResultRegM))
     return pOutData
   
-  def SelectTag(self, serNum):
+  def selectTag(self, serNum):
     backData = []
     buf = []
     buf.append(self.PICC_SElECTTAG)
@@ -307,7 +307,7 @@ class MFRC522:
     while i<5:
       buf.append(serNum[i])
       i = i + 1
-    pOut = self.CalulateCRC(buf)
+    pOut = self.calulateCRC(buf)
     buf.append(pOut[0])
     buf.append(pOut[1])
     (status, backData, backLen) = self.sendToPICC(self.PCD_TRANSCEIVE, buf)
@@ -318,7 +318,7 @@ class MFRC522:
     else:
       return 0
 
-  def SelectTagLevel(self, cascadeLevel, serNum):
+  def selectTagLevel(self, cascadeLevel, serNum):
     print "Select Level %d" % cascadeLevel
     backData = []
     buf = []
@@ -328,7 +328,7 @@ class MFRC522:
     while i<5:
       buf.append(serNum[i])
       i = i + 1
-    pOut = self.CalulateCRC(buf)
+    pOut = self.calulateCRC(buf)
     buf.append(pOut[0])
     buf.append(pOut[1])
     (status, backData, backLen) = self.sendToPICC(self.PCD_TRANSCEIVE, buf)
@@ -341,7 +341,7 @@ class MFRC522:
     else:
       return 0      
   
-  def Auth(self, authMode, BlockAddr, Sectorkey, serNum):
+  def auth(self, authMode, BlockAddr, Sectorkey, serNum):
     buff = []
 
     # First byte should be the authMode (A or B)
@@ -374,14 +374,14 @@ class MFRC522:
     # Return the status
     return status
   
-  def StopCrypto1(self):
+  def stopCrypto1(self):
     self.clearBitMask(self.Status2Reg, 0x08)
 
   def Read(self, blockAddr):
     recvData = []
     recvData.append(self.PICC_READ)
     recvData.append(blockAddr)
-    pOut = self.CalulateCRC(recvData)
+    pOut = self.calulateCRC(recvData)
     recvData.append(pOut[0])
     recvData.append(pOut[1])
     (status, backData, backLen) = self.sendToPICC(self.PCD_TRANSCEIVE, recvData)
@@ -391,11 +391,11 @@ class MFRC522:
     if len(backData) == 16:
       print "Sector "+str(blockAddr)+" "+str(backData)
   
-  def Write(self, blockAddr, writeData):
+  def write(self, blockAddr, writeData):
     buff = []
     buff.append(self.PICC_WRITE)
     buff.append(blockAddr)
-    crc = self.CalulateCRC(buff)
+    crc = self.calulateCRC(buff)
     buff.append(crc[0])
     buff.append(crc[1])
     (status, backData, backLen) = self.sendToPICC(self.PCD_TRANSCEIVE, buff)
@@ -412,7 +412,7 @@ class MFRC522:
             buf.append(0)
 
         print buf
-        crc = self.CalulateCRC(buf)
+        crc = self.calulateCRC(buf)
         buf.append(crc[0])
         buf.append(crc[1])
         (status, backData, backLen) = self.sendToPICC(self.PCD_TRANSCEIVE,buf)
@@ -421,25 +421,25 @@ class MFRC522:
         if status == self.MI_OK:
             print "Data written"
 
-  def WriteString(self, blockAddr, str):
+  def writeString(self, blockAddr, str):
     data = []
     blockOffset = 0
     for position, character in enumerate(str):
       if position > 0 and position % 4 == 0:
-        self.Write(blockAddr + blockOffset, data)
+        self.write(blockAddr + blockOffset, data)
         data = []
         blockOffset = blockOffset + 1
 
       data.append(ord(character))
 
     if len(data):
-      self.Write(blockAddr + blockOffset, data)
+      self.write(blockAddr + blockOffset, data)
 
 
-  def DumpClassic1K(self, key, uid):
+  def dumpClassic1K(self, key, uid):
     i = 0
     while i < 64:
-        status = self.Auth(self.PICC_AUTHENT1A, i, key, uid)
+        status = self.auth(self.PICC_AUTHENT1A, i, key, uid)
         # Check if authenticated
         if status == self.MI_OK:
             self.receive(i)
@@ -447,19 +447,19 @@ class MFRC522:
             print "Authentication error"
         i = i+1
 
-  def Halt(self):
+  def halt(self):
     buf = []
   
     buf.append(self.PICC_HALT)
     buf.append(0x00)
 
-    pOut = self.CalulateCRC(buf)
+    pOut = self.calulateCRC(buf)
     buf.append(pOut[0])
     buf.append(pOut[1])
 
     (status, backData, backLen) = self.sendToPICC(self.PCD_TRANSCEIVE, buf)
 
-  def Init(self):
+  def init(self):
     GPIO.output(self.NRSTPD, 1)
   
     self.reset();

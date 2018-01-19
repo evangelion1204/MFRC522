@@ -30,7 +30,7 @@ while continue_reading:
     # Scan for cards    
     time.sleep(1)
     
-    (status,TagType,ATQA) = MIFAREReader.Request(MIFAREReader.PICC_REQIDL)
+    (status,TagType,ATQA) = MIFAREReader.request(MIFAREReader.PICC_REQIDL)
 
     # If a card is found
     if status != MIFAREReader.MI_OK:
@@ -43,7 +43,7 @@ while continue_reading:
     print "Card detected %04x" % ATQAWord
     
     # Get the UID of the card
-    (status,uid) = MIFAREReader.AnticollLevel(1)
+    (status,uid) = MIFAREReader.anticollLevel(1)
 
     # If we have the UID, continue
     if status == MIFAREReader.MI_OK:
@@ -54,17 +54,17 @@ while continue_reading:
         key = [0xFF,0xFF,0xFF,0xFF,0xFF,0xFF]
         
         # Select the scanned tag
-        print MIFAREReader.SelectTagLevel(1, uid)
-        (status2,uid2) = MIFAREReader.AnticollLevel(2)
-        print MIFAREReader.SelectTagLevel(2, uid2)
+        print MIFAREReader.selectTagLevel(1, uid)
+        (status2,uid2) = MIFAREReader.anticollLevel(2)
+        print MIFAREReader.selectTagLevel(2, uid2)
 
         print uid[1:4] + uid2[0:4]
 
         # Authenticate
         # status = MIFAREReader.Auth(MIFAREReader.PICC_AUTHENT1A, 8, key, uid)
-        MIFAREReader.Read(0)
-        MIFAREReader.Read(4)
-        MIFAREReader.Read(8)
+        MIFAREReader.read(0)
+        MIFAREReader.read(4)
+        MIFAREReader.read(8)
 
         # Variable for the data to write
         data = []
@@ -75,9 +75,9 @@ while continue_reading:
         #
         # MIFAREReader.Write(4, data)
 
-        MIFAREReader.WriteString(4, 'Hallo World')
+        MIFAREReader.writeString(4, 'Hallo World')
 
-        MIFAREReader.Halt()
+        MIFAREReader.halt()
 
         # Check if authenticated
         # if status == MIFAREReader.MI_OK:
