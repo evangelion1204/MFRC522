@@ -106,9 +106,9 @@ class MFRC522:
   Reserved32      = 0x3D
   Reserved33      = 0x3E
   Reserved34      = 0x3F
-    
-  serNum = []
-  
+
+  SAK_UidIncomplete = 0x04
+
   def __init__(self, dev='/dev/spidev0.0', spd=1000000):
     spi.openSPI(device=dev,speed=spd)
     GPIO.setmode(GPIO.BOARD)
@@ -230,29 +230,25 @@ class MFRC522:
   
   
   def anticoll(self):
-    serNumCheck = 0
-    
-    serNum = []
-  
-    self.send(self.BitFramingReg, 0x00)
-    
-    serNum.append(self.PICC_ANTICOLL)
-    serNum.append(0x20)
-    
-    (status,backData,backBits) = self.sendToPICC(self.PCD_TRANSCEIVE,serNum)
+    uid = []
+    for level in [1, 2, 3, 4]:
+      (status, uid_part) = self.anticollLevel(level)
 
-    if(status == self.MI_OK):
-      i = 0
-      if len(backData)==5:
-        while i<4:
-          serNumCheck = serNumCheck ^ backData[i]
-          i = i + 1
-        if serNumCheck != backData[i]:
-          status = self.MI_ERR
-      else:
-        status = self.MI_ERR
-  
-    return (status,backData)
+      if status != self.MI_OK:
+        return False
+
+      SAK = self.selectTagLevel(level, uid_part)
+
+      uid += uid_part
+
+      if SAK & self.SAK_UidIncomplete == 0:
+        break
+
+    if len(uid) > 4:
+      return uid[1:]
+    else:
+      return uid
+
 
   def anticollLevel(self, cascadeLevel):
     serNumCheck = 0
@@ -299,24 +295,7 @@ class MFRC522:
     return pOutData
   
   def selectTag(self, serNum):
-    backData = []
-    buf = []
-    buf.append(self.PICC_SElECTTAG)
-    buf.append(0x70)
-    i = 0
-    while i<5:
-      buf.append(serNum[i])
-      i = i + 1
-    pOut = self.calulateCRC(buf)
-    buf.append(pOut[0])
-    buf.append(pOut[1])
-    (status, backData, backLen) = self.sendToPICC(self.PCD_TRANSCEIVE, buf)
-    
-    if (status == self.MI_OK) and (backLen == 0x18):
-      print "Size: " + str(backData[0])
-      return    backData[0]
-    else:
-      return 0
+    return self.selectTagLevel(1)
 
   def selectTagLevel(self, cascadeLevel, serNum):
     print "Select Level %d" % cascadeLevel
