@@ -10,6 +10,7 @@ def main():
     # print client.stop()
     reader = MFRC522.MFRC522()
 
+    (status,TagType,ATQA) = reader.request(reader.PICC_REQIDL)
     print(reader.anticoll())
 
 
