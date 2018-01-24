@@ -17,9 +17,13 @@ class nTag:
 
     def readHeader(self):
         data = self.reader.read(self.HEADER_PAGE)
-        self.pages = data[14] * 2
+        self.pages = data[14] / 2
 
     def readBody(self):
+        result = []
         for page in range(self.BODY_PAGE_START, self.BODY_PAGE_START + self.pages):
             print(self.PAGE_SIZE * page)
-            print(self.reader.read(self.PAGE_SIZE * page))
+            result = result + self.reader.read(self.PAGE_SIZE * page)
+            print(result)
+
+        return result
