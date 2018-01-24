@@ -1,5 +1,7 @@
+import time
 import mopify
 import MFRC522
+
 
 def main():
     client = mopify.Command("http://192.168.1.198:6680")
@@ -10,8 +12,9 @@ def main():
     # print client.stop()
     reader = MFRC522.MFRC522()
 
-    (status,TagType,ATQA) = reader.request(reader.PICC_REQIDL)
-    print(reader.anticoll())
+    while True:
+        time.sleep(1)
+        print(client.scan_for_picc())
 
 
 if __name__ == "__main__":
