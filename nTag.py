@@ -5,7 +5,7 @@ import MFRC522
 class nTag:
     HEADER_PAGE = 0
     BODY_PAGE_START = 4
-    PAGE_SIZE = 0
+    PAGE_SIZE = 4
 
     pages = 0
 
@@ -22,4 +22,4 @@ class nTag:
     def readBody(self):
         for page in range(self.BODY_PAGE_START, self.BODY_PAGE_START + self.pages):
             print(self.PAGE_SIZE * page)
-            print(self.reader.read(self.PAGE_SIZE * self.page))
+            print(self.reader.read(self.PAGE_SIZE * page))
