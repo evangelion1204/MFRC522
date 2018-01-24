@@ -26,3 +26,9 @@ class nTag:
             result = result + data
 
         return result
+
+    def readBodyAsString(self):
+        rawBody = self.readBody()
+        characters = map(chr, rawBody)
+        return "".join(characters).strip(chr(0))
+
