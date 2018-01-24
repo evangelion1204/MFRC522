@@ -12,10 +12,10 @@ def main():
     # print client.stop()
     reader = MFRC522.MFRC522()
 
-    while True:
-        time.sleep(1)
-        print(reader.scanForPicc())
-
+    # while True:
+    time.sleep(1)
+    tag = reader.scanForPicc()
+    tag.readBody()
 
 if __name__ == "__main__":
     main()

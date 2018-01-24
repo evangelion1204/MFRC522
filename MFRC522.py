@@ -5,6 +5,7 @@ import RPi.GPIO as GPIO
 import spi
 import signal
 import time
+import nTag
 
 
 class MFRC522:
@@ -362,11 +363,12 @@ class MFRC522:
         recvData.append(pOut[0])
         recvData.append(pOut[1])
         (status, backData, backLen) = self.sendToPICC(self.PCD_TRANSCEIVE, recvData)
+
         if not (status == self.MI_OK):
             print "Error while reading!"
-        i = 0
+
         if len(backData) == 16:
-            print "Sector " + str(blockAddr) + " " + str(backData)
+            return backData
 
     def write(self, blockAddr, writeData):
         buff = []
@@ -440,7 +442,9 @@ class MFRC522:
         if status != self.MI_OK:
             return False
 
-        return self.anticoll()
+        uid = self.anticoll()
+
+        return nTag.nTag(self, uid)
 
     def init(self):
         GPIO.output(self.NRSTPD, 1)
