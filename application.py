@@ -15,7 +15,11 @@ def main():
     # while True:
     time.sleep(1)
     tag = reader.scanForPicc()
-    tag.readBody()
+    rawData = tag.readBody()
+    charArray = map(chr, rawData)
+    s = "".join(charArray)
+
+    print(s)
 
 if __name__ == "__main__":
     main()
