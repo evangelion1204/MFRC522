@@ -14,7 +14,7 @@ def main():
 
     while True:
         time.sleep(1)
-        print(client.scan_for_picc())
+        print(reader.scanForPicc())
 
 
 if __name__ == "__main__":

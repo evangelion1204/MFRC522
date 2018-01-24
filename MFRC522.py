@@ -132,7 +132,7 @@ class MFRC522:
         self.send(reg, tmp | mask)
 
     def clearBitMask(self, reg, mask):
-        tmp = self.receive(reg);
+        tmp = self.receive(reg)
         self.send(reg, tmp & (~mask))
 
     def antennaOn(self):
@@ -164,7 +164,7 @@ class MFRC522:
         self.clearBitMask(self.CommIrqReg, 0x80)
         self.setBitMask(self.FIFOLevelReg, 0x80)
 
-        self.send(self.CommandReg, self.PCD_IDLE);
+        self.send(self.CommandReg, self.PCD_IDLE)
 
         while (i < len(sendData)):
             self.send(self.FIFODataReg, sendData[i])
@@ -207,7 +207,7 @@ class MFRC522:
                     i = 0
                     while i < n:
                         backData.append(self.receive(self.FIFODataReg))
-                        i = i + 1;
+                        i = i + 1
             else:
                 status = self.MI_ERR
 
@@ -220,7 +220,7 @@ class MFRC522:
 
         self.send(self.BitFramingReg, 0x07)
 
-        TagType.append(reqMode);
+        TagType.append(reqMode)
         (status, backData, backBits) = self.sendToPICC(self.PCD_TRANSCEIVE, TagType)
 
         if ((status != self.MI_OK) | (backBits != 0x10)):
@@ -275,7 +275,7 @@ class MFRC522:
 
     def calulateCRC(self, pIndata):
         self.clearBitMask(self.DivIrqReg, 0x04)
-        self.setBitMask(self.FIFOLevelReg, 0x80);
+        self.setBitMask(self.FIFOLevelReg, 0x80)
         i = 0
         while i < len(pIndata):
             self.send(self.FIFODataReg, pIndata[i])
@@ -435,8 +435,8 @@ class MFRC522:
 
         (status, backData, backLen) = self.sendToPICC(self.PCD_TRANSCEIVE, buf)
 
-    def scan_for_picc(self):
-        (status) = self.request(self.PICC_REQIDL)
+    def scanForPicc(self):
+        (status, TagType, ATQA) = self.request(self.PICC_REQIDL)
         if status != self.MI_OK:
             return False
 
@@ -445,7 +445,7 @@ class MFRC522:
     def init(self):
         GPIO.output(self.NRSTPD, 1)
 
-        self.reset();
+        self.reset()
 
         self.send(self.TModeReg, 0x8D)
         self.send(self.TPrescalerReg, 0x3E)
