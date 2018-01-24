@@ -4,7 +4,7 @@ import MFRC522
 
 class nTag:
     HEADER_PAGE = 0
-    BODY_PAGE_START = 4
+    BODY_PAGE_START = 1
     PAGE_SIZE = 4
 
     pages = 0
