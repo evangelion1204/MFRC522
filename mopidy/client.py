@@ -10,20 +10,22 @@ class Client:
     def __init__(self, host="http://localhost:6680"):
         self.host = host
 
-    def rpc(self, method, params = {}):
+    def rpc(self, method, params = None):
         id = self.id
         self.id += 1
 
-        payload = {
+        command = {
             "method": method,
-            "params": params,
             "jsonrpc": "2.0",
             "id": id,
         }
 
+        if params:
+            command['params'] = params
+
         response = requests.post(
             url=self.host + "/mopidy/rpc",
-            data=json.dumps(payload),
+            data=json.dumps(command),
             headers=self.HEADERS,
         ).json()
 

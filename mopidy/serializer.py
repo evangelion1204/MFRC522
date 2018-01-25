@@ -1,11 +1,13 @@
 class Serializer:
     commands = []
 
-    def rpc(self, method, params = {}):
-        self.commands.append({
+    def rpc(self, method, params = None):
+        command = {
             'method': method,
-            'params': params,
-        })
+        }
+
+        if params:
+            command['params'] = params
 
         return True
 
