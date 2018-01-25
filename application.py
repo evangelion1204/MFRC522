@@ -22,7 +22,7 @@ def main():
             continue
 
         body = tag.readBodyAsString()
-
+        print("Read raw body:", body)
         try:
             commands = json.loads(body)
         except ValueError:

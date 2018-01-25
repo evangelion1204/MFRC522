@@ -1,4 +1,5 @@
 import argparse
+import json
 import time
 import MFRC522
 from mopify import serializer
@@ -29,7 +30,7 @@ def writeCommand(command):
         if tag == False:
             continue
 
-        tag.writeStringInBody(command)
+        tag.writeStringInBody(json.dumps([command]))
 
         return
 
