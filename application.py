@@ -1,3 +1,4 @@
+import json
 import time
 import mopify
 import MFRC522
@@ -12,10 +13,24 @@ def main():
     # print client.stop()
     reader = MFRC522.MFRC522()
 
-    # while True:
-    time.sleep(1)
-    tag = reader.scanForPicc()
-    print(tag.readBodyAsString())
+    while True:
+        commands = []
+        time.sleep(1)
+        tag = reader.scanForPicc()
+
+        if tag == False:
+            continue
+
+        body = tag.readBodyAsString()
+
+        try:
+            commands = json.loads(body)
+        except ValueError:
+            continue
+
+        for command in commands:
+            print(command)
+
 
 if __name__ == "__main__":
     main()
