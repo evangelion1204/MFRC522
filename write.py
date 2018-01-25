@@ -29,7 +29,7 @@ def writeCommand(command):
         if tag == False:
             continue
 
-        tag.writeString(command)
+        tag.writeStringInBody(command)
 
         return
 
