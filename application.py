@@ -1,6 +1,6 @@
 import json
 import time
-from mopify import client
+from mopidy import client
 import MFRC522
 
 

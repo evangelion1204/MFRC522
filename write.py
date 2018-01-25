@@ -2,7 +2,7 @@ import argparse
 import json
 import time
 import MFRC522
-from mopify import serializer
+from mopidy import serializer, commands
 
 
 def main():
@@ -13,10 +13,12 @@ def main():
 
     params = args.params.split(',')
 
-    mopifySerializer = serializer.Serializer()
+    mopidySerializer = serializer.Serializer()
+    mopidy = commands.Commands(mopidySerializer)
 
     if args.command == 'play_uri':
-        writeCommand(mopifySerializer.play_uri(params[0]))
+        mopidy.play_uri(params[0])
+        writeCommand(mopidySerializer.getCommandBuffer())
     else:
         print("Command not supported", args.command)
 

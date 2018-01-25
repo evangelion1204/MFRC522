@@ -1,17 +1,14 @@
 import requests
 import json
 
-class Client:
-    HEADERS = {"content-type": "application/json"}
+class Commands:
+    client = None
 
-    host = ''
-    id = 0
-
-    def __init__(self, host="http://localhost:6680"):
-        self.host = host
+    def __init__(self, client):
+        self.client = client
 
     def get_playback_state(self):
-        return self.call_rpc("core.playback.get_state")
+        return self.client.rpc("core.playback.get_state")
 
     def play_uri(self, uri):
         self.clear_tracklist()
@@ -19,22 +16,22 @@ class Client:
         self.play()
 
     def clear_tracklist(self):
-        return self.call_rpc("core.tracklist.clear")
+        return self.client.rpc("core.tracklist.clear")
 
     def add_to_tracklist(self, uri):
-        return self.call_rpc("core.tracklist.add", { "uri": uri })
+        return self.client.rpc("core.tracklist.add", { "uri": uri })
 
     def get_tracklist(self):
-        return self.call_rpc("core.tracklist.get_tracks")
+        return self.client.rpc("core.tracklist.get_tracks")
 
     def get_playlists(self):
-        return self.call_rpc("core.playlists.as_list")
+        return self.client.rpc("core.playlists.as_list")
 
     def play(self):
-        return self.call_rpc("core.playback.play")
+        return self.client.rpc("core.playback.play")
 
     def stop(self):
-        return self.call_rpc("core.playback.stop")
+        return self.client.rpc("core.playback.stop")
 
     def call_rpc(self, method, params = {}):
         id = self.id
