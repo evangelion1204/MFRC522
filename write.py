@@ -18,12 +18,13 @@ def main():
 
     if args.command == 'play_uri':
         mopidy.play_uri(params[0])
-        writeCommand(mopidySerializer.getCommandBuffer())
+        writeCommands(mopidySerializer.getCommandBuffer())
     else:
         print("Command not supported", args.command)
 
-def writeCommand(command):
+def writeCommands(commands):
     reader = MFRC522.MFRC522()
+    print("Writing commands", commands)
     print("Place a writeable tag on the reader")
     while True:
         time.sleep(1)
@@ -32,7 +33,7 @@ def writeCommand(command):
         if tag == False:
             continue
 
-        tag.writeStringInBody(json.dumps([command]))
+        tag.writeStringInBody(json.dumps(commands))
 
         return
 
