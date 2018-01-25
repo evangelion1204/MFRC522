@@ -32,3 +32,6 @@ class nTag:
         characters = map(chr, rawBody)
         return "".join(characters).strip(chr(0))
 
+    def writeString(self, string):
+        self.reader.writeString(string, self.BODY_PAGE_START * self.PAGE_SIZE)
+

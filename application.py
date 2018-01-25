@@ -1,16 +1,16 @@
 import json
 import time
-import mopify
+from mopify import client
 import MFRC522
 
 
 def main():
-    client = mopify.Command("http://192.168.1.198:6680")
-    # print client.get_playback_state()
-    # print client.get_playlists()
-    # print client.play_uri("spotify:user:1187838290:playlist:1Cm42wNpmI2TQC1zei0MXw")
-    # print client.get_tracklist()
-    # print client.stop()
+    mopify = client.Client("http://192.168.1.198:6680")
+    # print mopify.get_playback_state()
+    # print mopify.get_playlists()
+    # print mopify.play_uri("spotify:user:1187838290:playlist:1Cm42wNpmI2TQC1zei0MXw")
+    # print mopify.get_tracklist()
+    # print mopify.stop()
     reader = MFRC522.MFRC522()
 
     while True:

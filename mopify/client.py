@@ -1,7 +1,7 @@
 import requests
 import json
 
-class Command:
+class Client:
     HEADERS = {"content-type": "application/json"}
 
     host = ''
