@@ -1,7 +1,7 @@
 import requests
 import json
 
-class Commands:
+class Commands(object):
     client = None
 
     def __init__(self, client):

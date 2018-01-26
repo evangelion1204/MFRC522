@@ -9,6 +9,8 @@ class Serializer:
         if params:
             command['params'] = params
 
+        self.commands.append(command)
+
         return True
 
     def getCommandBuffer(self):

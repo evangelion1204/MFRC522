@@ -33,7 +33,7 @@ def writeCommands(commands):
         if tag == False:
             continue
 
-        tag.writeStringInBody(json.dumps(commands))
+        tag.writeStringInBody(json.dumps(commands, separators=(',', ':')))
 
         return
 
