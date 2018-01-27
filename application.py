@@ -10,16 +10,22 @@ def main():
 
     reader = MFRC522.MFRC522()
     tags = {}
+    previousTag = None
 
     while True:
         time.sleep(1)
         tag = reader.scanForPicc()
 
         if tag == False:
-            print("No tags found, stopping")
-            mopidy.stop()
-            tags = {}
+            if not previousTag:
+                print("No tags found, stopping")
+                mopidy.stop()
+                tags = {}
+
+            previousTag = tag
             continue
+
+        previousTag = tag
 
         if tag.getUidAsHex() in tags:
             print("Skipping tag with UID", tag.getUidAsHex())
