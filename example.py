@@ -10,7 +10,8 @@ def main():
     # Recorder = proxy.RecordWithOutPassthrough(commands.Commands)
     # recorder = Recorder(rpcSerializer)
 
-    print(mopidy.play_uri('spotify:user:1187838290:playlist:7jTHoHHHX50SMonOHZBjfI'))
+    # print(mopidy.play_uri('spotify:user:1187838290:playlist:7jTHoHHHX50SMonOHZBjfI'))
+    print(mopidy.play_uri('spotify:album:4JfI4TozKok2YW02q9w3MZ'))
     # print(recorder.play_uri('spotify:user:1187838290:playlist:7jTHoHHHX50SMonOHZBjfI'))
     print(json.dumps(rpcSerializer.getCommandBuffer(), separators=(',', ':')))
 

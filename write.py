@@ -32,8 +32,9 @@ def writeCommands(commands):
 
         if tag == False:
             continue
-
-        tag.writeStringInBody(json.dumps(commands, separators=(',', ':')))
+        body = json.dumps(commands, separators=(',', ':'))
+        print("Writing body", body)
+        tag.writeStringInBody(body)
 
         return
 
