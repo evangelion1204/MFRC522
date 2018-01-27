@@ -1,11 +1,13 @@
 import json
 import time
-from mopidy import client
+from mopidy import client, commands
 import MFRC522
 
 
 def main():
-    mopify = client.Client("http://192.168.1.198:6680")
+    rpcClient = client.Client("http://192.168.1.198:6680")
+    mopidy = commands.Commands(rpcClient)
+
     reader = MFRC522.MFRC522()
     tags = {}
 
@@ -14,6 +16,9 @@ def main():
         tag = reader.scanForPicc()
 
         if tag == False:
+            print("No tags found, stopping")
+            mopidy.stop()
+            tags = {}
             continue
 
         if tag.getUidAsHex() in tags:
@@ -27,14 +32,14 @@ def main():
         body = tag.readBodyAsString()
         print("Read raw body:", body)
         try:
-            commands = json.loads(body)
+            rpcCommands = json.loads(body)
         except ValueError:
             continue
 
-        for command in commands:
+        for command in rpcCommands:
             method = command['method']
             params = command['params'] if 'params' in command else {}
-            mopify.rpc(method, params)
+            rpcClient.rpc(method, params)
 
 
 if __name__ == "__main__":
