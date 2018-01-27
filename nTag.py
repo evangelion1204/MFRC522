@@ -35,3 +35,6 @@ class nTag:
     def writeStringInBody(self, body):
         self.reader.writeString(self.BODY_PAGE_START * self.PAGE_SIZE, body)
 
+    def getUidAsHex(self):
+        return ":".join(map(lambda i: "%.2x" % i, self.uid))
+

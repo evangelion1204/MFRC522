@@ -10,17 +10,19 @@ def main():
     tags = {}
 
     while True:
-        commands = []
         time.sleep(1)
         tag = reader.scanForPicc()
 
         if tag == False:
             continue
 
-        if tags[tag.uid]:
+        if tag.getUidAsHex() in tags:
+            print("Skipping tag with UID", tag.getUidAsHex())
             continue
 
-        tags[tag.uid] = tag
+        print("Discovered new tag with UID", tag.getUidAsHex())
+
+        tags[tag.getUidAsHex()] = tag
 
         body = tag.readBodyAsString()
         print("Read raw body:", body)
