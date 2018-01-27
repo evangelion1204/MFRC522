@@ -6,12 +6,8 @@ import MFRC522
 
 def main():
     mopify = client.Client("http://192.168.1.198:6680")
-    # print mopify.get_playback_state()
-    # print mopify.get_playlists()
-    # print mopify.play_uri("spotify:user:1187838290:playlist:1Cm42wNpmI2TQC1zei0MXw")
-    # print mopify.get_tracklist()
-    # print mopify.stop()
     reader = MFRC522.MFRC522()
+    tags = {}
 
     while True:
         commands = []
@@ -21,6 +17,11 @@ def main():
         if tag == False:
             continue
 
+        if tags[tag.uid]:
+            continue
+
+        tags[tag.uid] = tag
+
         body = tag.readBodyAsString()
         print("Read raw body:", body)
         try:
@@ -29,7 +30,9 @@ def main():
             continue
 
         for command in commands:
-            print(command)
+            method = command['method']
+            params = command['params'] if 'params' in command else {}
+            mopify.rpc(method, params)
 
 
 if __name__ == "__main__":
