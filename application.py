@@ -5,12 +5,12 @@ import MFRC522
 
 
 def main():
-    rpcClient = client.Client("http://192.168.1.198:6680")
+    rpcClient = client.Client("http://localhost:6680")
     mopidy = commands.Commands(rpcClient)
 
     reader = MFRC522.MFRC522()
     tags = {}
-    previousTag = None
+    previousTag = False
 
     while True:
         time.sleep(1)

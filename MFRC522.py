@@ -458,4 +458,6 @@ class MFRC522:
 
         self.send(self.TxAutoReg, 0x40)
         self.send(self.ModeReg, 0x3D)
+        # TODO: That's the maximum gain - should be configurable
+        self.send(self.RFCfgReg, 0x07 << 4)
         self.antennaOn()
