@@ -32,8 +32,8 @@ def main():
         tag = reader.scanForPicc()
 
         if tag == False:
-            if previousTag:
-                print("No tags found, stopping")
+            if not previousTag and tags :
+                print("Tag removed, stopping")
                 mopidy.stop()
                 tags = {}
 
