@@ -1,10 +1,25 @@
 import json
 import time
-from mopidy import client, commands
 import MFRC522
+import signal
+from mopidy import client, commands
+import RPi.GPIO as GPIO
 
+continueReading = True
+
+# Capture SIGINT for cleanup when the script is aborted
+def stop(signal,frame):
+    global continueReading
+    print "Ctrl+C captured, ending read."
+    continueReading = False
+    GPIO.cleanup()
+
+# Hook the SIGINT
+signal.signal(signal.SIGINT, stop)
 
 def main():
+    global continueReading
+
     rpcClient = client.Client("http://localhost:6680")
     mopidy = commands.Commands(rpcClient)
 
@@ -12,7 +27,7 @@ def main():
     tags = {}
     previousTag = False
 
-    while True:
+    while continueReading:
         time.sleep(1)
         tag = reader.scanForPicc()
 
